@@ -3,10 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _speed = 3;
-
     private const string Horizontal = "Horizontal";
     private const string Vertical = "Vertical";
+
+    [SerializeField] private float _speed = 3;
 
     private CharacterController _characterController;
 
@@ -17,25 +17,28 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (_characterController != null)
+        if (_characterController == null)
         {
-            Vector3 playerInput = new Vector3(Input.GetAxis(Horizontal), 0, Input.GetAxis(Vertical));
+            Debug.LogError("Time.deltaTime is zero. Cannot assign velocity.");
+            return;
+        }
 
-            Vector3 position = playerInput * Time.deltaTime * _speed + Physics.gravity;
+        Vector3 playerInput = new Vector3(Input.GetAxis(Horizontal), 0, Input.GetAxis(Vertical));
 
-            if (_characterController.isGrounded)
-            {
-                _characterController.Move(position);
-            }
-            else
-            {
-                _characterController.Move(_characterController.velocity + Physics.gravity * Time.deltaTime);
-            }
+        Vector3 position = playerInput * Time.deltaTime * _speed + Physics.gravity;
 
-            if (playerInput != Vector3.zero)
-            {
-                transform.LookAt(transform.position + playerInput);
-            }
+        if (_characterController.isGrounded)
+        {
+            _characterController.Move(position);
+        }
+        else
+        {
+            _characterController.Move(_characterController.velocity + Physics.gravity * Time.deltaTime);
+        }
+
+        if (playerInput != Vector3.zero)
+        {
+            transform.LookAt(transform.position + playerInput);
         }
     }
 }
